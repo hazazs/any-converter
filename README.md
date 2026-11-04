@@ -1,29 +1,29 @@
 # Any Converter
 
-A small Windows JavaFX file converter. Currently supports **JFIF → JPG**.
+A lightweight Windows JavaFX batch converter with two options: **JFIF → JPG** and **WEBP → JPG**.
 
 ## What it does
 
-1. Start the application.
-2. Click **JFIF → JPG**.
-3. The app scans `D:\\downloadz` (the files immediately in that folder, not subfolders).
-4. Every `.jfif` / `.JFIF` file that contains JPEG data is copied to the same folder with the same basename and a `.jpg` extension. Progress updates under the button.
+Click one of the two buttons to scan `D:\\downloadz` for files of that type (directly inside the folder; no recursion). Both buttons share a progress bar and a status line that reports converted, skipped and failed files.
 
-JFIF is already JPEG, so copying the bytes is lossless and preserves the original image quality and metadata. The original `.jfif` files are **kept**. Existing `.jpg` files are **never overwritten**. Invalid JPEGs are counted as failures. When finished, the window reports converted, skipped, and failed counts.
+- **JFIF → JPG**: makes a byte-for-byte copy of every `.jfif` / `.JFIF` file with the same basename and a `.jpg` extension. JFIF is already JPEG, so this conversion is lossless.
+- **WEBP → JPG**: decodes each `.webp` / `.WEBP` image and encodes it as a JPEG with the same basename. JPEG does not support transparency, so transparent pixels are placed on a **white background**. WebP → JPG is lossy, as JPEG re-encodes the image. Designed for still WebP images.
+
+The original files are kept. The application **never overwrites existing `.jpg` files** and reports invalid images as failures. Failed conversions do not leave incomplete JPGs.
 
 ## Download and run on Windows
 
-Download the latest built [AnyConverter.jar](dist/AnyConverter.jar) after the [Windows build workflow](../../actions/workflows/build.yml) finishes.
+Download the latest built [AnyConverter.jar](dist/AnyConverter.jar) from this repository. The [Windows build workflow](../../actions/workflows/build.yml) publishes an updated JAR after each commit.
 
-**Requirements:** Windows x64 and Java 21 or newer installed.
+**Requirements:** Windows x64 and Java 21 or newer.
 
-Double-click `AnyConverter.jar` if Java is associated with `.jar` files, or launch it from the terminal:
+Double-click `AnyConverter.jar` if Java is associated with JAR files or run:
 
 ```powershell
 java -jar AnyConverter.jar
 ```
 
-The Maven build includes JavaFX's Windows classes and native libraries inside the executable JAR; it does not require a separate JavaFX installation.
+The executable JAR bundles JavaFX's Windows runtime and the WebP decoder: there is no separate JavaFX or WebP codec installation.
 
 ## Build from source
 
@@ -32,14 +32,14 @@ mvn clean verify
 java -jar target/AnyConverter.jar
 ```
 
-Build on **Windows x64** to include Windows native JavaFX libraries. The GitHub Actions workflow runs the tests on Windows and uploads the runnable JAR as an artifact, then publishes it to `dist/AnyConverter.jar`.
+Build on **Windows x64** for Windows JavaFX native libraries. GitHub Actions runs tests and validates the shaded WebP decoder, then uploads and publishes the runnable JAR.
 
 Main class: `hu.hazazs.anyconverter.Launcher`.
 
-## Current UI
+## UI
 
-- Title: **Any Converter**
-- One button: **JFIF → JPG**
-- Progress bar immediately beneath the button
-- Small status line showing progress and completion results
-- Black circular-arrows icon on a transparent background
+- Window title: **Any Converter**
+- Buttons: **JFIF → JPG**, **WEBP → JPG**
+- Progress bar immediately beneath the buttons
+- Status text for progress and completion
+- Black circular-arrows application icon on a transparent background

@@ -27,7 +27,7 @@ jobs:
       - name: Build and test executable JAR
         run: mvn --batch-mode --no-transfer-progress clean verify
 
-      - name: Confirm JavaFX Windows runtime is bundled
+      - name: Confirm Windows JavaFX runtime is bundled
         shell: pwsh
         run: |
           $entries = & jar tf target/AnyConverter.jar
@@ -39,6 +39,12 @@ jobs:
             throw 'Windows JavaFX native libraries are missing from JAR'
           }
 
+      - name: Confirm bundled WebP decoder works
+        shell: pwsh
+        run: |
+          java -Djava.awt.headless=true -cp target/AnyConverter.jar hu.hazazs.anyconverter.WebpConverter
+          if ($LASTEXITCODE -ne 0) { throw 'WebP decoder not available in runnable JAR' }
+
       - name: Upload runnable JAR as build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -46,7 +52,6 @@ jobs:
           path: target/AnyConverter.jar
           if-no-files-found: error
 
-      # Publish the exact tested JAR as a downloadable repository file.
       - name: Publish runnable JAR in dist
         if: github.ref == 'refs/heads/main'
         shell: pwsh
