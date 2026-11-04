@@ -42,7 +42,7 @@ jobs:
       - name: Confirm bundled WebP decoder works
         shell: pwsh
         run: |
-          java -Djava.awt.headless=true -cp target/AnyConverter.jar hu.hazazs.anyconverter.WebpConverter
+          java -cp target/AnyConverter.jar hu.hazazs.anyconverter.WebpConverter
           if ($LASTEXITCODE -ne 0) { throw 'WebP decoder not available in runnable JAR' }
 
       - name: Upload runnable JAR as build artifact
